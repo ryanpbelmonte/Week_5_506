@@ -1,24 +1,139 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8 mx-auto">
-        <h1 class="h3 mb-4">About</h1>
-        <p>This is a placeholder About page. Replace its contents with your team's About content as part of the Week 5 assignment.</p>
-
-        <h2 class="h5 mt-4">Required sections</h2>
-        <ul>
-            <li>Project name and one-or-two-sentence pitch</li>
-            <li>Team members and roles</li>
-            <li>Project type (which of the seven from Week 4 lecture, or a custom variant)</li>
-            <li>Endpoints planned (5–8 routes, one-line description each)</li>
-            <li>Web-based data source (API name, docs link, specific endpoint, free-tier notes)</li>
-            <li>Schema sketch (tables and columns)</li>
-            <li>Link to your team's S3 bucket</li>
-            <li>Link to your team's GitHub org</li>
-        </ul>
-
-        <p class="text-muted small">All members of your team must have the same content here. See the assignment instructions in <code>README.md</code>.</p>
+<div class="container py-4">
+    <div class="p-4 p-md-5 mb-4 rounded-3 bg-light border">
+      <div class="container-fluid py-2">
+        <h1 class="display-6 fw-bold">Trail Checker</h1>
+        <p class="col-md-10 fs-5">
+          Trail Checker helps hikers quickly decide whether a trail is reasonable to visit by combining location-based weather data with saved user trail checks. The app is designed for people who want a fast, practical trail-planning snapshot before heading outside.
+        </p>
+      </div>
     </div>
-</div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">1. Project Name and Pitch</div>
+      <div class="card-body">
+        <p>
+          <strong>Trail Checker</strong> is a web app for hikers and outdoor planners who want a quick trail-readiness check before choosing a hike. Users can search for a trail or location, view current and forecast weather conditions, and save trail checks to their account for later planning.
+        </p>
+      </div>
+    </div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">2. Team Members and Roles</div>
+      <div class="card-body">
+        <ul>
+          <li><strong>Ryan Belmonte</strong> — Server-side: Flask routes, external API integration, business logic, and templates.</li>
+          <li><strong>Liam Sipp</strong> — Client-side: JavaScript, CSS, browser interactivity, and presentation.</li>
+          <li><strong>Nick Stjern</strong> — Db-and-security: schema, migrations, indexes, input validation, and secret hygiene.</li>
+        </ul>
+        <p class="mb-0">
+          This is a three-person team, so there is no separate coordinator role. Coordination work will be shared across the team.
+        </p>
+      </div>
+    </div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">3. Project Type</div>
+      <div class="card-body">
+        <p>
+          <strong>Trail Checker.</strong>
+          This project is a location-based outdoor planning app. It is similar to a dashboard/tracker project because users can log in, search an external data source, save trail checks, and review previously saved planning information.
+        </p>
+      </div>
+    </div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">4. Endpoints Planned</div>
+      <div class="card-body">
+        <ul>
+          <li><code>GET /</code> — Show the home page and introduce Trail Checker.</li>
+          <li><code>GET /trails</code> — Show the trail search page and the logged-in user's saved trail checks.</li>
+          <li><code>POST /trails/search</code> — Submit a trail/location search and request weather data from the external API.</li>
+          <li><code>POST /trails/save</code> — Save a searched trail check to the logged-in user's account.</li>
+          <li><code>GET /trails/&lt;id&gt;</code> — Show one saved trail check with weather details and notes.</li>
+          <li><code>POST /trails/&lt;id&gt;/delete</code> — Delete one saved trail check from the logged-in user's account.</li>
+          <li><code>GET /about</code> — Show this shared team project plan.</li>
+        </ul>
+      </div>
+    </div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">5. Web-Based Data Source</div>
+      <div class="card-body">
+        <p>
+          <strong>API:</strong> Open-Meteo Weather Forecast API
+        </p>
+  
+        <p>
+          <strong>Docs:</strong>
+          <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">
+            https://open-meteo.com/en/docs
+          </a>
+        </p>
+  
+        <p>
+          <strong>Specific endpoint planned:</strong>
+        </p>
+  
+        <pre class="bg-light border p-3 rounded"><code>https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&current=temperature_2m,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&timezone=auto</code></pre>
+  
+        <p>
+          <strong>Optional supporting endpoint for location search:</strong>
+        </p>
+  
+        <pre class="bg-light border p-3 rounded"><code>https://geocoding-api.open-meteo.com/v1/search?name={search_term}&count=5&language=en&format=json</code></pre>
+  
+        <p>
+          <strong>Free-tier notes:</strong>
+          Open-Meteo offers free access for non-commercial use and does not require an API key. Its free-use terms list limits of less than 10,000 API calls per day, 5,000 per hour, and 600 per minute.
+        </p>
+  
+        <p>
+          <strong>Backup plan:</strong>
+          If the API integration takes longer than expected, the MVP can use a small hard-coded list of sample trail locations with stored latitude and longitude values while still saving trail checks in Postgres. This keeps the login, database, saved-check workflow, and templates working while the API integration is finished.
+        </p>
+      </div>
+    </div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">6. Schema Sketch</div>
+      <div class="card-body">
+        <pre class="bg-light border p-3 rounded"><code>Users
+  (id, username, password_hash, created_at)
+  
+  TrailChecks
+  (id, user_id, trail_name, location_name, latitude, longitude, checked_at, notes)
+  
+  WeatherSnapshots
+  (id, trail_check_id, temperature, precipitation, weather_code, wind_speed, forecast_date, created_at)
+  
+  FavoriteTrails
+  (id, user_id, trail_name, location_name, latitude, longitude, created_at)</code></pre>
+      </div>
+    </div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">7. Link to Team S3 Bucket</div>
+      <div class="card-body">
+        <p>
+          <strong>Team S3 bucket link:</strong>
+          <span class="text-danger">TODO: Replace with the team's shared S3 bucket URL once finalized.</span>
+        </p>
+      </div>
+    </div>
+  
+    <div class="card my-4">
+      <div class="card-header fw-bold">8. Link to Team GitHub Org</div>
+      <div class="card-body">
+        <p class="mb-0">
+          <strong>GitHub organization:</strong>
+          <a href="https://github.com/TCSS506-CacheKings" target="_blank" rel="noopener noreferrer">
+            https://github.com/TCSS506-CacheKings
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
 {% endblock %}
