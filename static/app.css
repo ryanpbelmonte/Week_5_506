@@ -1,0 +1,7 @@
+:root {
+  --bs-primary: #5b2d8e;
+}
+
+.navbar.app-shell {
+  background-color: #5b2d8e !important;
+}
